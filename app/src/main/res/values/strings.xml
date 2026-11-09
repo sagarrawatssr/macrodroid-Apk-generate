@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Macro Automation</string>
+    <string name="accessibility_description">Enables Macro Automation to toggle Bluetooth, WiFi, Hotspot, Location, and Data without root or ADB.</string>
+</resources>
