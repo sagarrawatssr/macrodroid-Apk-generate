@@ -1,259 +1,173 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0F172A"
-    android:orientation="vertical">
+    android:background="#0B0F17"
+    android:fillViewport="true">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!-- TARGET SECTION -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TARGET SETTING"
+            android:textColor="#94A3B8"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.08"
+            android:layout_marginBottom="12dp" />
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+            android:layout_marginBottom="24dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnTargetInternet"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:text="Internet"
+                    app:cornerRadius="12dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnTargetHotspot"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:text="Hotspot"
+                    app:cornerRadius="12dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnTargetLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:text="Location"
+                    app:cornerRadius="12dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnTargetBluetooth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:text="Bluetooth"
+                    app:cornerRadius="12dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnTargetSound"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sound"
+                    app:cornerRadius="12dp" />
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <!-- ACTION SECTION -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ACTION"
+            android:textColor="#94A3B8"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.08"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Notice shown when Internet, Hotspot, or Location is picked -->
+        <TextView
+            android:id="@+id/tvActionRestrictionNotice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#2E1014"
+            android:textColor="#FCA5A5"
+            android:padding="10dp"
+            android:textSize="12sp"
+            android:visibility="gone"
+            android:layout_marginBottom="12dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:orientation="horizontal"
+            android:layout_marginBottom="24dp">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnActionEnable"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Macro Automation"
-                android:textColor="#F8FAFC"
-                android:textSize="22sp"
-                android:textStyle="bold" />
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:text="Enable"
+                app:cornerRadius="12dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnActionDisable"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:text="Direct silent hardware automation scheduler"
-                android:textColor="#94A3B8"
-                android:textSize="13sp" />
-
-            <!-- CREATION CARD -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:cardBackgroundColor="#1E293B"
-                app:cardCornerRadius="14dp"
-                app:strokeColor="#334155"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="14dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="SET TIMER DELAY"
-                        android:textColor="#38BDF8"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:orientation="horizontal"
-                        android:weightSum="3">
-
-                        <EditText
-                            android:id="@+id/etHours"
-                            android:layout_width="0dp"
-                            android:layout_height="48dp"
-                            android:layout_marginEnd="4dp"
-                            android:layout_weight="1"
-                            android:background="#0F172A"
-                            android:gravity="center"
-                            android:hint="Hr"
-                            android:inputType="number"
-                            android:text="0"
-                            android:textColor="#FFF"
-                            android:textColorHint="#64748B" />
-
-                        <EditText
-                            android:id="@+id/etMinutes"
-                            android:layout_width="0dp"
-                            android:layout_height="48dp"
-                            android:layout_marginHorizontal="4dp"
-                            android:layout_weight="1"
-                            android:background="#0F172A"
-                            android:gravity="center"
-                            android:hint="Min"
-                            android:inputType="number"
-                            android:text="0"
-                            android:textColor="#FFF"
-                            android:textColorHint="#64748B" />
-
-                        <EditText
-                            android:id="@+id/etSeconds"
-                            android:layout_width="0dp"
-                            android:layout_height="48dp"
-                            android:layout_marginStart="4dp"
-                            android:layout_weight="1"
-                            android:background="#0F172A"
-                            android:gravity="center"
-                            android:hint="Sec"
-                            android:inputType="number"
-                            android:text="10"
-                            android:textColor="#FFF"
-                            android:textColorHint="#64748B" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="14dp"
-                        android:text="CHOOSE ACTION"
-                        android:textColor="#38BDF8"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
-
-                    <com.google.android.material.button.MaterialButtonToggleGroup
-                        android:id="@+id/toggleActionGroup"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        app:checkedButton="@id/btnActionEnable"
-                        app:singleSelection="true">
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnActionEnable"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Enable"
-                            android:textColor="#FFF" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnActionDisable"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Disable"
-                            android:textColor="#FFF" />
-                    </com.google.android.material.button.MaterialButtonToggleGroup>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="14dp"
-                        android:text="TARGET SETTING"
-                        android:textColor="#38BDF8"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
-
-                    <com.google.android.material.chip.ChipGroup
-                        android:id="@+id/chipGroupSettings"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        app:singleSelection="true">
-
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/chipBluetooth"
-                            style="@style/Widget.MaterialComponents.Chip.Choice"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:checked="true"
-                            android:text="Bluetooth"
-                            android:textColor="#FFF"
-                            app:chipBackgroundColor="#334155" />
-
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/chipWifi"
-                            style="@style/Widget.MaterialComponents.Chip.Choice"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="WiFi"
-                            android:textColor="#FFF"
-                            app:chipBackgroundColor="#334155" />
-
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/chipLocation"
-                            style="@style/Widget.MaterialComponents.Chip.Choice"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Location"
-                            android:textColor="#FFF"
-                            app:chipBackgroundColor="#334155" />
-
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/chipHotspot"
-                            style="@style/Widget.MaterialComponents.Chip.Choice"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Hotspot"
-                            android:textColor="#FFF"
-                            app:chipBackgroundColor="#334155" />
-
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/chipInternet"
-                            style="@style/Widget.MaterialComponents.Chip.Choice"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Internet"
-                            android:textColor="#FFF"
-                            app:chipBackgroundColor="#334155" />
-                    </com.google.android.material.chip.ChipGroup>
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnSchedule"
-                        android:layout_width="match_parent"
-                        android:layout_height="52dp"
-                        android:layout_marginTop="16dp"
-                        android:text="+ Add Automation Task"
-                        android:textColor="#0F172A"
-                        android:textStyle="bold"
-                        app:backgroundTint="#38BDF8"
-                        app:cornerRadius="10dp" />
-
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- ACTIVE SCHEDULED TASKS -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="ACTIVE SCHEDULED TASKS"
-                android:textColor="#38BDF8"
-                android:textSize="12sp"
-                android:textStyle="bold" />
-
-            <LinearLayout
-                android:id="@+id/layoutOngoingTasks"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:orientation="vertical" />
-
-            <!-- EXPIRED TASKS & LOGS -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="HISTORY &amp; LOGS"
-                android:textColor="#94A3B8"
-                android:textSize="12sp"
-                android:textStyle="bold" />
-
-            <LinearLayout
-                android:id="@+id/layoutHistoryTasks"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:orientation="vertical" />
-
+                android:layout_weight="1"
+                android:text="Disable"
+                app:cornerRadius="12dp" />
         </LinearLayout>
-    </ScrollView>
-</LinearLayout>
+
+        <!-- DELAY INPUTS -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="24dp">
+
+            <EditText
+                android:id="@+id/etHours"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Hr"
+                android:inputType="number"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#64748B" />
+
+            <EditText
+                android:id="@+id/etMinutes"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Min"
+                android:inputType="number"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#64748B" />
+
+            <EditText
+                android:id="@+id/etSeconds"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Sec"
+                android:inputType="number"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#64748B" />
+        </LinearLayout>
+
+        <!-- SCHEDULE SUBMIT -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnScheduleTask"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Schedule Macro"
+            app:cornerRadius="14dp"
+            android:backgroundTint="#2563EB" />
+
+    </LinearLayout>
+</ScrollView>
