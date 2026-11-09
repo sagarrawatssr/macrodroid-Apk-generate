@@ -3,14 +3,14 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
-android { 
+android {
     namespace = "com.simple.macro"
     compileSdk = 34
 
     defaultConfig {
         applicationId = "com.simple.macro"
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 28 // Legacy compatibility: permits silent Bluetooth & WiFi switching
         versionCode = 1
         versionName = "1.0"
     }
