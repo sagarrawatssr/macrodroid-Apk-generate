@@ -1,291 +1,259 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:background="#0F172A">
+    android:background="#0F172A"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="20dp">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Macro Automation"
-            android:textColor="#F8FAFC"
-            android:textSize="24sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Configure timer, action, and target setting"
-            android:textColor="#94A3B8"
-            android:textSize="14sp" />
-
-        <!-- 1. TIME DELAY CARD -->
-        <com.google.android.material.card.MaterialCardView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            app:cardBackgroundColor="#1E293B"
-            app:cardCornerRadius="16dp"
-            app:strokeColor="#334155"
-            app:strokeWidth="1dp">
+            android:orientation="vertical"
+            android:padding="16dp">
 
-            <LinearLayout
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Macro Automation"
+                android:textColor="#F8FAFC"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Direct silent hardware automation scheduler"
+                android:textColor="#94A3B8"
+                android:textSize="13sp" />
+
+            <!-- CREATION CARD -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="1. SET TIMER DELAY"
-                    android:textColor="#38BDF8"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
+                android:layout_marginTop="16dp"
+                app:cardBackgroundColor="#1E293B"
+                app:cardCornerRadius="14dp"
+                app:strokeColor="#334155"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:orientation="horizontal"
-                    android:weightSum="3">
+                    android:orientation="vertical"
+                    android:padding="14dp">
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp"
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="6dp"
-                        android:hint="Hours"
-                        app:boxStrokeColor="#38BDF8"
-                        app:hintTextColor="#94A3B8">
+                        android:text="SET TIMER DELAY"
+                        android:textColor="#38BDF8"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
 
-                        <com.google.android.material.textfield.TextInputEditText
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="horizontal"
+                        android:weightSum="3">
+
+                        <EditText
                             android:id="@+id/etHours"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_marginEnd="4dp"
+                            android:layout_weight="1"
+                            android:background="#0F172A"
                             android:gravity="center"
+                            android:hint="Hr"
                             android:inputType="number"
                             android:text="0"
-                            android:textColor="#FFFFFF" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                            android:textColor="#FFF"
+                            android:textColorHint="#64748B" />
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginHorizontal="3dp"
-                        android:hint="Mins"
-                        app:boxStrokeColor="#38BDF8"
-                        app:hintTextColor="#94A3B8">
-
-                        <com.google.android.material.textfield.TextInputEditText
+                        <EditText
                             android:id="@+id/etMinutes"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_marginHorizontal="4dp"
+                            android:layout_weight="1"
+                            android:background="#0F172A"
                             android:gravity="center"
+                            android:hint="Min"
                             android:inputType="number"
                             android:text="0"
-                            android:textColor="#FFFFFF" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                            android:textColor="#FFF"
+                            android:textColorHint="#64748B" />
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="6dp"
-                        android:hint="Secs"
-                        app:boxStrokeColor="#38BDF8"
-                        app:hintTextColor="#94A3B8">
-
-                        <com.google.android.material.textfield.TextInputEditText
+                        <EditText
                             android:id="@+id/etSeconds"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_marginStart="4dp"
+                            android:layout_weight="1"
+                            android:background="#0F172A"
                             android:gravity="center"
+                            android:hint="Sec"
                             android:inputType="number"
                             android:text="10"
-                            android:textColor="#FFFFFF" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                            android:textColor="#FFF"
+                            android:textColorHint="#64748B" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:text="CHOOSE ACTION"
+                        android:textColor="#38BDF8"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                    <com.google.android.material.button.MaterialButtonToggleGroup
+                        android:id="@+id/toggleActionGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        app:checkedButton="@id/btnActionEnable"
+                        app:singleSelection="true">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnActionEnable"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Enable"
+                            android:textColor="#FFF" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnActionDisable"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Disable"
+                            android:textColor="#FFF" />
+                    </com.google.android.material.button.MaterialButtonToggleGroup>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:text="TARGET SETTING"
+                        android:textColor="#38BDF8"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/chipGroupSettings"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        app:singleSelection="true">
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipBluetooth"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="Bluetooth"
+                            android:textColor="#FFF"
+                            app:chipBackgroundColor="#334155" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipWifi"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="WiFi"
+                            android:textColor="#FFF"
+                            app:chipBackgroundColor="#334155" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipLocation"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Location"
+                            android:textColor="#FFF"
+                            app:chipBackgroundColor="#334155" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipHotspot"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Hotspot"
+                            android:textColor="#FFF"
+                            app:chipBackgroundColor="#334155" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipInternet"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Internet"
+                            android:textColor="#FFF"
+                            app:chipBackgroundColor="#334155" />
+                    </com.google.android.material.chip.ChipGroup>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSchedule"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:layout_marginTop="16dp"
+                        android:text="+ Add Automation Task"
+                        android:textColor="#0F172A"
+                        android:textStyle="bold"
+                        app:backgroundTint="#38BDF8"
+                        app:cornerRadius="10dp" />
+
                 </LinearLayout>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
 
-        <!-- 2. ACTION SELECTOR (ENABLE / DISABLE) -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardBackgroundColor="#1E293B"
-            app:cardCornerRadius="16dp"
-            app:strokeColor="#334155"
-            app:strokeWidth="1dp">
+            <!-- ACTIVE SCHEDULED TASKS -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="ACTIVE SCHEDULED TASKS"
+                android:textColor="#38BDF8"
+                android:textSize="12sp"
+                android:textStyle="bold" />
 
             <LinearLayout
+                android:id="@+id/layoutOngoingTasks"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:layout_marginTop="8dp"
+                android:orientation="vertical" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="2. SELECT ACTION"
-                    android:textColor="#38BDF8"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
-
-                <com.google.android.material.button.MaterialButtonToggleGroup
-                    android:id="@+id/toggleActionGroup"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    app:checkedButton="@id/btnActionEnable"
-                    app:singleSelection="true">
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnActionEnable"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Enable"
-                        android:textColor="#FFFFFF" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnActionDisable"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Disable"
-                        android:textColor="#FFFFFF" />
-                </com.google.android.material.button.MaterialButtonToggleGroup>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- 3. TARGET SETTING CARD -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardBackgroundColor="#1E293B"
-            app:cardCornerRadius="16dp"
-            app:strokeColor="#334155"
-            app:strokeWidth="1dp">
+            <!-- EXPIRED TASKS & LOGS -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="HISTORY &amp; LOGS"
+                android:textColor="#94A3B8"
+                android:textSize="12sp"
+                android:textStyle="bold" />
 
             <LinearLayout
+                android:id="@+id/layoutHistoryTasks"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:layout_marginTop="8dp"
+                android:orientation="vertical" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="3. TARGET SETTING"
-                    android:textColor="#38BDF8"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
-
-                <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/chipGroupSettings"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    app:singleSelection="true">
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipBluetooth"
-                        style="@style/Widget.MaterialComponents.Chip.Choice"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="true"
-                        android:text="Bluetooth"
-                        android:textColor="#FFFFFF"
-                        app:chipBackgroundColor="#334155" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipWifi"
-                        style="@style/Widget.MaterialComponents.Chip.Choice"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="WiFi"
-                        android:textColor="#FFFFFF"
-                        app:chipBackgroundColor="#334155" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipLocation"
-                        style="@style/Widget.MaterialComponents.Chip.Choice"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Location"
-                        android:textColor="#FFFFFF"
-                        app:chipBackgroundColor="#334155" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipHotspot"
-                        style="@style/Widget.MaterialComponents.Chip.Choice"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Hotspot"
-                        android:textColor="#FFFFFF"
-                        app:chipBackgroundColor="#334155" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipInternet"
-                        style="@style/Widget.MaterialComponents.Chip.Choice"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Internet"
-                        android:textColor="#FFFFFF"
-                        app:chipBackgroundColor="#334155" />
-                </com.google.android.material.chip.ChipGroup>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- EXECUTE BUTTON -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSchedule"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_marginTop="24dp"
-            android:text="Schedule Automation"
-            android:textColor="#0F172A"
-            android:textStyle="bold"
-            app:backgroundTint="#38BDF8"
-            app:cornerRadius="14dp" />
-
-        <!-- ACCESSIBILITY PERMISSION ASSISTANT BUTTON -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnEnableAccessibility"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="Enable Automation Service (Bypasses Android 13+ Prompt)"
-            android:textColor="#94A3B8" />
-
-        <TextView
-            android:id="@+id/tvStatus"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:gravity="center"
-            android:text="Status: Idle"
-            android:textColor="#64748B"
-            android:textSize="14sp" />
-
-    </LinearLayout>
-</ScrollView>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
