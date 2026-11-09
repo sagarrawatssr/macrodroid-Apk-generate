@@ -1,353 +1,217 @@
 package com.simple.macro
 
-import android.annotation.SuppressLint
-import android.app.AlarmManager
-import android.app.PendingIntent
-import android.bluetooth.BluetoothAdapter
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.net.wifi.WifiManager
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.view.LayoutInflater
 import android.view.View
+import android.widget.Button
 import android.widget.EditText
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.button.MaterialButtonToggleGroup
-import com.google.android.material.chip.ChipGroup
-import org.json.JSONArray
-import org.json.JSONObject
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import java.util.UUID
 
-// ==========================================
-// 1. DATA MODEL
-// ==========================================
-data class AutomationTask(
-    val id: String,
-    val target: String,
-    val isEnable: Boolean,
-    val triggerAtMillis: Long,
-    var status: String = "SCHEDULED",
-    var log: String = ""
-) {
-    fun toJson(): JSONObject = JSONObject().apply {
-        put("id", id)
-        put("target", target)
-        put("isEnable", isEnable)
-        put("triggerAtMillis", triggerAtMillis)
-        put("status", status)
-        put("log", log)
-    }
-
-    companion object {
-        fun fromJson(json: JSONObject): AutomationTask = AutomationTask(
-            id = json.getString("id"),
-            target = json.getString("target"),
-            isEnable = json.getBoolean("isEnable"),
-            triggerAtMillis = json.getLong("triggerAtMillis"),
-            status = json.optString("status", "SCHEDULED"),
-            log = json.optString("log", "")
-        )
-    }
-}
-
-// ==========================================
-// 2. PERSISTENCE STORAGE
-// ==========================================
-object TaskManager {
-    private const val PREF_NAME = "macro_tasks_pref"
-    private const val KEY_TASKS = "tasks_list"
-
-    fun getTasks(context: Context): MutableList<AutomationTask> {
-        val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-        val rawJson = prefs.getString(KEY_TASKS, "[]") ?: "[]"
-        val array = JSONArray(rawJson)
-        val list = mutableListOf<AutomationTask>()
-        for (i in 0 until array.length()) {
-            list.add(AutomationTask.fromJson(array.getJSONObject(i)))
-        }
-        return list
-    }
-
-    fun saveTasks(context: Context, tasks: List<AutomationTask>) {
-        val array = JSONArray()
-        tasks.forEach { array.put(it.toJson()) }
-        context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-            .edit()
-            .putString(KEY_TASKS, array.toString())
-            .apply()
-    }
-
-    fun addTask(context: Context, task: AutomationTask) {
-        val tasks = getTasks(context)
-        tasks.add(0, task)
-        saveTasks(context, tasks)
-    }
-
-    fun updateTask(context: Context, taskId: String, update: (AutomationTask) -> Unit) {
-        val tasks = getTasks(context)
-        tasks.find { it.id == taskId }?.let {
-            update(it)
-            saveTasks(context, tasks)
-        }
-    }
-}
-
-// ==========================================
-// 3. BACKGROUND RECEIVER
-// ==========================================
-class TaskReceiver : BroadcastReceiver() {
-
-    @SuppressLint("MissingPermission")
-    override fun onReceive(context: Context, intent: Intent) {
-        val taskId = intent.getStringExtra("TASK_ID") ?: return
-        val target = intent.getStringExtra("TARGET") ?: "Bluetooth"
-        val isEnable = intent.getBooleanExtra("IS_ENABLE", true)
-        val timeStamp = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date())
-
-        val success = when (target) {
-            "Bluetooth" -> {
-                val adapter = BluetoothAdapter.getDefaultAdapter()
-                if (adapter != null) {
-                    if (isEnable) adapter.enable() else adapter.disable()
-                } else false
-            }
-            "WiFi" -> {
-                val wifiManager = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
-                @Suppress("DEPRECATION")
-                wifiManager.setWifiEnabled(isEnable)
-                true
-            }
-            "Location" -> {
-                val mode = if (isEnable) "3" else "0"
-                runShellCommand("settings put secure location_mode $mode")
-            }
-            "Hotspot" -> {
-                val action = if (isEnable) "start" else "stop"
-                runShellCommand("cmd connectivity tether $action wifi")
-            }
-            "Internet" -> {
-                val state = if (isEnable) "enable" else "disable"
-                runShellCommand("svc data $state")
-            }
-            else -> false
-        }
-
-        val actionName = if (isEnable) "ENABLED" else "DISABLED"
-        val resultLog = if (success) {
-            "[$timeStamp] $target $actionName executed successfully"
-        } else {
-            "[$timeStamp] Failed to $actionName $target"
-        }
-
-        TaskManager.updateTask(context, taskId) {
-            it.status = "COMPLETED"
-            it.log = resultLog
-        }
-    }
-
-    private fun runShellCommand(command: String): Boolean {
-        return try {
-            val process = Runtime.getRuntime().exec(arrayOf("sh", "-c", command))
-            process.waitFor() == 0
-        } catch (e: Exception) {
-            false
-        }
-    }
-}
-
-// ==========================================
-// 4. MAIN ACTIVITY
-// ==========================================
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var layoutOngoing: LinearLayout
-    private lateinit var layoutHistory: LinearLayout
-    private val uiHandler = Handler(Looper.getMainLooper())
-
-    private val countdownRunnable = object : Runnable {
-        override fun run() {
-            renderTaskLists()
-            uiHandler.postDelayed(this, 1000)
-        }
+    enum class TargetSetting(val idName: String, val displayName: String, val isRestricted: Boolean) {
+        INTERNET("internet", "Internet", true),
+        HOTSPOT("hotspot", "Hotspot", true),
+        LOCATION("location", "Location", true),
+        BLUETOOTH("bluetooth", "Bluetooth", false),
+        SOUND("sound", "Sound", false)
     }
+
+    enum class ActionType {
+        ENABLE, DISABLE
+    }
+
+    // Current State
+    private var selectedTarget: TargetSetting = TargetSetting.INTERNET
+    private var selectedAction: ActionType? = null
+
+    // Target UI Buttons
+    private lateinit var btnTargetInternet: MaterialButton
+    private lateinit var btnTargetHotspot: MaterialButton
+    private lateinit var btnTargetLocation: MaterialButton
+    private lateinit var btnTargetBluetooth: MaterialButton
+    private lateinit var btnTargetSound: MaterialButton
+    private lateinit var targetButtons: List<Pair<TargetSetting, MaterialButton>>
+
+    // Action UI Buttons (Enable / Disable)
+    private lateinit var btnActionEnable: MaterialButton
+    private lateinit var btnActionDisable: MaterialButton
+    private lateinit var tvActionRestrictionNotice: TextView
+
+    // Time Inputs & Schedule
+    private lateinit var etHours: EditText
+    private lateinit var etMinutes: EditText
+    private lateinit var etSeconds: EditText
+    private lateinit var btnScheduleTask: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val etHours = findViewById<EditText>(R.id.etHours)
-        val etMinutes = findViewById<EditText>(R.id.etMinutes)
-        val etSeconds = findViewById<EditText>(R.id.etSeconds)
-        val toggleAction = findViewById<MaterialButtonToggleGroup>(R.id.toggleActionGroup)
-        val chipSettings = findViewById<ChipGroup>(R.id.chipGroupSettings)
-        val btnSchedule = findViewById<MaterialButton>(R.id.btnSchedule)
+        initViews()
+        setupTargetListeners()
+        setupActionListeners()
 
-        layoutOngoing = findViewById(R.id.layoutOngoingTasks)
-        layoutHistory = findViewById(R.id.layoutHistoryTasks)
+        // Apply default selection and highlight on initial load
+        selectTarget(TargetSetting.INTERNET)
+    }
 
-        btnSchedule.setOnClickListener {
-            val hours = etHours.text.toString().toLongOrNull() ?: 0L
-            val minutes = etMinutes.text.toString().toLongOrNull() ?: 0L
-            val seconds = etSeconds.text.toString().toLongOrNull() ?: 0L
-            val totalDelayMillis = ((hours * 3600) + (minutes * 60) + seconds) * 1000
+    private fun initViews() {
+        btnTargetInternet = findViewById(R.id.btnTargetInternet)
+        btnTargetHotspot = findViewById(R.id.btnTargetHotspot)
+        btnTargetLocation = findViewById(R.id.btnTargetLocation)
+        btnTargetBluetooth = findViewById(R.id.btnTargetBluetooth)
+        btnTargetSound = findViewById(R.id.btnTargetSound)
 
-            if (totalDelayMillis <= 0) {
-                Toast.makeText(this, "Enter a valid time delay", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+        targetButtons = listOf(
+            TargetSetting.INTERNET to btnTargetInternet,
+            TargetSetting.HOTSPOT to btnTargetHotspot,
+            TargetSetting.LOCATION to btnTargetLocation,
+            TargetSetting.BLUETOOTH to btnTargetBluetooth,
+            TargetSetting.SOUND to btnTargetSound
+        )
 
-            val isEnable = toggleAction.checkedButtonId == R.id.btnActionEnable
-            val target = when (chipSettings.checkedChipId) {
-                R.id.chipBluetooth -> "Bluetooth"
-                R.id.chipWifi -> "WiFi"
-                R.id.chipLocation -> "Location"
-                R.id.chipHotspot -> "Hotspot"
-                R.id.chipInternet -> "Internet"
-                else -> "Bluetooth"
-            }
+        btnActionEnable = findViewById(R.id.btnActionEnable)
+        btnActionDisable = findViewById(R.id.btnActionDisable)
+        tvActionRestrictionNotice = findViewById(R.id.tvActionRestrictionNotice)
 
-            val triggerTime = System.currentTimeMillis() + totalDelayMillis
-            val taskId = UUID.randomUUID().toString()
+        etHours = findViewById(R.id.etHours)
+        etMinutes = findViewById(R.id.etMinutes)
+        etSeconds = findViewById(R.id.etSeconds)
+        btnScheduleTask = findViewById(R.id.btnScheduleTask)
 
-            val task = AutomationTask(
-                id = taskId,
-                target = target,
-                isEnable = isEnable,
-                triggerAtMillis = triggerTime,
-                status = "SCHEDULED",
-                log = "Scheduled to run in ${totalDelayMillis / 1000}s"
-            )
-
-            scheduleAlarm(task)
-            TaskManager.addTask(this, task)
-            renderTaskLists()
-            Toast.makeText(this, "Task Added!", Toast.LENGTH_SHORT).show()
+        btnScheduleTask.setOnClickListener {
+            scheduleMacro()
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        uiHandler.post(countdownRunnable)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        uiHandler.removeCallbacks(countdownRunnable)
-    }
-
-    private fun scheduleAlarm(task: AutomationTask) {
-        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(this, TaskReceiver::class.java).apply {
-            putExtra("TASK_ID", task.id)
-            putExtra("TARGET", task.target)
-            putExtra("IS_ENABLE", task.isEnable)
-        }
-        val pendingIntent = PendingIntent.getBroadcast(
-            this,
-            task.id.hashCode(),
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-        alarmManager.setExactAndAllowWhileIdle(
-            AlarmManager.RTC_WAKEUP,
-            task.triggerAtMillis,
-            pendingIntent
-        )
-    }
-
-    private fun cancelAlarm(task: AutomationTask) {
-        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(this, TaskReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(
-            this,
-            task.id.hashCode(),
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-        alarmManager.cancel(pendingIntent)
-        TaskManager.updateTask(this, task.id) {
-            it.status = "CANCELLED"
-            it.log = "Task cancelled by user"
-        }
-        renderTaskLists()
-    }
-
-    private fun renderTaskLists() {
-        val allTasks = TaskManager.getTasks(this)
-        val now = System.currentTimeMillis()
-
-        layoutOngoing.removeAllViews()
-        layoutHistory.removeAllViews()
-
-        val ongoing = allTasks.filter { it.status == "SCHEDULED" && it.triggerAtMillis > now }
-        val history = allTasks.filter { it.status != "SCHEDULED" || it.triggerAtMillis <= now }
-
-        val inflater = LayoutInflater.from(this)
-
-        if (ongoing.isEmpty()) {
-            val empty = TextView(this).apply {
-                text = "No active scheduled tasks"
-                setTextColor(0xFF64748B.toInt())
+    private fun setupTargetListeners() {
+        for ((target, button) in targetButtons) {
+            button.setOnClickListener {
+                selectTarget(target)
             }
-            layoutOngoing.addView(empty)
+        }
+    }
+
+    private fun setupActionListeners() {
+        btnActionEnable.setOnClickListener {
+            if (!selectedTarget.isRestricted) {
+                selectedAction = ActionType.ENABLE
+                updateActionButtonsUi()
+            }
+        }
+
+        btnActionDisable.setOnClickListener {
+            if (!selectedTarget.isRestricted) {
+                selectedAction = ActionType.DISABLE
+                updateActionButtonsUi()
+            }
+        }
+    }
+
+    /**
+     * Requirement 2: Highlights the currently selected target and removes highlight from others.
+     * Requirement 1: Blocks Enable/Disable if target is Internet, Hotspot, or Location.
+     */
+    private fun selectTarget(target: TargetSetting) {
+        selectedTarget = target
+
+        // 1. Highlight the selected target button
+        for ((setting, button) in targetButtons) {
+            val isCurrent = setting == selectedTarget
+            if (isCurrent) {
+                // Active Highlight State (Bright accent outline + elevated fill)
+                button.strokeWidth = dpToPx(2)
+                button.strokeColor = ColorStateList.valueOf(Color.parseColor("#3B82F6")) // Accent Blue
+                button.setBackgroundColor(Color.parseColor("#1D283A"))                   // Highlight Dark Slate
+                button.setTextColor(Color.WHITE)
+            } else {
+                // Inactive State
+                button.strokeWidth = dpToPx(1)
+                button.strokeColor = ColorStateList.valueOf(Color.parseColor("#334155")) // Muted Slate
+                button.setBackgroundColor(Color.parseColor("#0F172A"))                   // Base Dark
+                button.setTextColor(Color.parseColor("#94A3B8"))                         // Muted Text
+            }
+        }
+
+        // 2. Enforce Enable/Disable restriction for Hotspot, Internet, and Location
+        if (target.isRestricted) {
+            selectedAction = null
+            btnActionEnable.isEnabled = false
+            btnActionDisable.isEnabled = false
+
+            btnActionEnable.alpha = 0.35f
+            btnActionDisable.alpha = 0.35f
+
+            tvActionRestrictionNotice.visibility = View.VISIBLE
+            tvActionRestrictionNotice.text = "${target.displayName} cannot be enabled or disabled."
         } else {
-            ongoing.forEach { task ->
-                val view = inflater.inflate(R.layout.item_task, layoutOngoing, false)
-                val tvTitle = view.findViewById<TextView>(R.id.tvTaskTitle)
-                val tvCountdown = view.findViewById<TextView>(R.id.tvCountdown)
-                val tvLog = view.findViewById<TextView>(R.id.tvTaskLog)
-                val btnCancel = view.findViewById<MaterialButton>(R.id.btnCancelTask)
+            btnActionEnable.isEnabled = true
+            btnActionDisable.isEnabled = true
 
-                val diffSeconds = (task.triggerAtMillis - now) / 1000
-                val h = diffSeconds / 3600
-                val m = (diffSeconds % 3600) / 60
-                val s = diffSeconds % 60
+            btnActionEnable.alpha = 1.0f
+            btnActionDisable.alpha = 1.0f
 
-                val actionName = if (task.isEnable) "ENABLE" else "DISABLE"
-                tvTitle.text = "${task.target} → $actionName"
-                tvCountdown.text = String.format("%02d:%02d:%02d", h, m, s)
-                tvLog.text = "Executing in ${diffSeconds}s"
-
-                btnCancel.visibility = View.VISIBLE
-                btnCancel.setOnClickListener { cancelAlarm(task) }
-
-                layoutOngoing.addView(view)
+            tvActionRestrictionNotice.visibility = View.GONE
+            if (selectedAction == null) {
+                selectedAction = ActionType.ENABLE
             }
         }
 
-        if (history.isEmpty()) {
-            val empty = TextView(this).apply {
-                text = "No task history"
-                setTextColor(0xFF64748B.toInt())
-            }
-            layoutHistory.addView(empty)
-        } else {
-            history.forEach { task ->
-                val view = inflater.inflate(R.layout.item_task, layoutHistory, false)
-                val tvTitle = view.findViewById<TextView>(R.id.tvTaskTitle)
-                val tvCountdown = view.findViewById<TextView>(R.id.tvCountdown)
-                val tvLog = view.findViewById<TextView>(R.id.tvTaskLog)
-                val btnCancel = view.findViewById<MaterialButton>(R.id.btnCancelTask)
+        updateActionButtonsUi()
+    }
 
-                val actionName = if (task.isEnable) "ENABLE" else "DISABLE"
-                tvTitle.text = "${task.target} → $actionName"
-                tvCountdown.text = task.status
-                tvCountdown.setTextColor(if (task.status == "COMPLETED") 0xFF10B981.toInt() else 0xFFEF4444.toInt())
-                tvLog.text = task.log
-                btnCancel.visibility = View.GONE
-
-                layoutHistory.addView(view)
-            }
+    private fun updateActionButtonsUi() {
+        if (selectedTarget.isRestricted) {
+            btnActionEnable.strokeWidth = 0
+            btnActionDisable.strokeWidth = 0
+            btnActionEnable.setBackgroundColor(Color.parseColor("#1E293B"))
+            btnActionDisable.setBackgroundColor(Color.parseColor("#1E293B"))
+            return
         }
+
+        // Action highlight for unrestricted targets
+        if (selectedAction == ActionType.ENABLE) {
+            btnActionEnable.strokeWidth = dpToPx(2)
+            btnActionEnable.strokeColor = ColorStateList.valueOf(Color.parseColor("#10B981"))
+            btnActionEnable.setBackgroundColor(Color.parseColor("#064E3B"))
+
+            btnActionDisable.strokeWidth = 0
+            btnActionDisable.setBackgroundColor(Color.parseColor("#1E293B"))
+        } else if (selectedAction == ActionType.DISABLE) {
+            btnActionDisable.strokeWidth = dpToPx(2)
+            btnActionDisable.strokeColor = ColorStateList.valueOf(Color.parseColor("#EF4444"))
+            btnActionDisable.setBackgroundColor(Color.parseColor("#7F1D1D"))
+
+            btnActionEnable.strokeWidth = 0
+            btnActionEnable.setBackgroundColor(Color.parseColor("#1E293B"))
+        }
+    }
+
+    private fun scheduleMacro() {
+        if (selectedTarget.isRestricted) {
+            Toast.makeText(
+                this,
+                "${selectedTarget.displayName} is restricted and cannot be toggled.",
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+
+        val action = selectedAction ?: return
+        Toast.makeText(
+            this,
+            "Macro scheduled: ${selectedTarget.displayName} -> $action",
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    private fun dpToPx(dp: Int): Int {
+        return (dp * resources.displayMetrics.density).toInt()
     }
 }
